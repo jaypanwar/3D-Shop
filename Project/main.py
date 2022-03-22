@@ -18,11 +18,6 @@ DB_PASS = "2122"
 
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
 
-
-@app.route('/Features',methods=['POST', 'GET'])
-def Features():
-    return render_template('Features.html')
-
 @app.route('/')
 def home():
  # Check if user is loggedin
@@ -104,10 +99,6 @@ def login():
             print('Incorrect username/password')
 
     return render_template('login.html')
-    
-@app.route('/checkOut', methods=['POST', 'GET'])
-def checkOut():
-    return render_template('checkout.html')
 
 @app.route('/tryon/<file_path>',methods = ['POST', 'GET'])   
 def tryon(file_path):
@@ -116,33 +107,12 @@ def tryon(file_path):
     return redirect('http://127.0.0.1:5000/',code=302, Response=None)
     #return Response(gen(VideoCamera()),mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
-CART=[]
-@app.route('/tryall',methods = ['POST', 'GET'])
-def tryall():
-    print("YESSS")
-    if request.method == 'POST':
-        cart = request.form['mydata'].replace(',', '/')
-        print("tryall cart type= ", type(cart))
-        print("tryall cart= ", cart)
-        os.system('python test.py ' + cart)
-        render_template('checkout.html', message='')
-
-
 def gen(camera):
     while True:
         frame = camera.get_frame()
         #print("frame= ", frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-
-@app.route("/cart/<file_path>",methods = ['POST', 'GET'])
-def cart(file_path):
-    global CART
-    file_path = file_path.replace(',','/')
-    print("ADDED", file_path)
-    CART.append(file_path)
-    return render_template("checkout.html")
 
 @app.route('/video_feed')
 def video_feed():
@@ -156,7 +126,6 @@ def logout():
    session.pop('id', None)
    session.pop('username', None)
    return render_template('login.html')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
